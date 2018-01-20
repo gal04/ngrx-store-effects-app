@@ -6,6 +6,8 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 
+import { Pizza } from '../../models/pizza.model';
+
 @Component({
   selector: 'pizza-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,10 +22,25 @@ import {
         <button type="button" class="btn btn__ok">
           View Pizza
         </button>
+        <button 
+            type="button"
+            class="btn btn__warning"            
+            (click)="removePizzaOut()">
+            Delete Pizza
+          </button>
       </a>
     </div>
   `,
 })
 export class PizzaItemComponent {
+
   @Input() pizza: any;
+  @Output() removei = new EventEmitter<Pizza>();
+
+  removePizzaOut() {
+    //const { this } = form;
+    console.log("Pizza item");
+    console.log(this.pizza);
+    this.removei.emit({ ...this.pizza });
+  }
 }

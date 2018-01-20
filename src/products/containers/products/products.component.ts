@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
+import { Router, ActivatedRoute } from '@angular/router';
 import { Pizza } from '../../models/pizza.model';
 import { PizzasService } from '../../services/pizzas.service';
 
@@ -19,9 +19,10 @@ import { PizzasService } from '../../services/pizzas.service';
         <div *ngIf="!((pizzas)?.length)">
           No pizzas, add one to get started.
         </div>
-        <pizza-item
-          *ngFor="let pizza of (pizzas)"
-          [pizza]="pizza">
+        <pizza-item          
+          *ngFor="let pizza of (pizzas)"          
+          [pizza]="pizza"
+          (removei)="onRemovei($event)">
         </pizza-item>
       </div>
     </div>
@@ -29,12 +30,36 @@ import { PizzasService } from '../../services/pizzas.service';
 })
 export class ProductsComponent implements OnInit {
   pizzas: Pizza[];
+  pizza: Pizza;
+  visualise: Pizza;
 
-  constructor(private pizzaService: PizzasService) {}
+  constructor(
+    private pizzaService: PizzasService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.pizzaService.getPizzas().subscribe(pizzas => {
       this.pizzas = pizzas;
     });
   }
+  onRemovei(event: Pizza) {
+    const remove = window.confirm('Are you sure?');
+    console.log("products - onRemove = " + remove);
+    if (remove) {
+      this.pizzaService.removePizza(event).subscribe(() => {
+        this.router.navigate([`/products`]);
+      });      
+    }
+    else{
+      console.log("products - stay in page ");
+      //this.pizzaService.getPizzas().subscribe(pizzas => {
+       // this.pizzas = pizzas;
+      //  this.router.navigate([`/products`]);
+      //});
+    }
+  }
+
+
 }
