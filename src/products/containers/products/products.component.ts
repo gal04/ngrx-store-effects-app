@@ -21,11 +21,11 @@ import { Pizza } from '../../models/pizza.model';
         </a>
       </div>
       <div class="products__list">
-        <div *ngIf="!((pizzas$ | async)?.length)">
+        <div *ngIf="!((_pizzas$ | async)?.length)">
           No pizzas$, add one to get started.
         </div>
         <pizza-item          
-          *ngFor="let pizza of (pizzas$ | async)"          
+          *ngFor="let pizza of (_pizzas$ | async)"          
           [pizza]="pizza"
           (removei)="onRemovei($event)">
         </pizza-item>
@@ -37,7 +37,7 @@ export class ProductsComponent implements OnInit {
   pizzas$: Pizza[];
   pizza: Pizza;
   visualise: Pizza;
-  pizzas$$: Observable<Pizza[]>;
+  _pizzas$: Observable<Pizza[]>;
   /**
    * private pizzaS$ervice: Pizzas$Service,
     private route: ActivatedRoute,
@@ -46,7 +46,12 @@ export class ProductsComponent implements OnInit {
   constructor(private store: Store<fromStore.ProductsState>) {}
 
   ngOnInit() {
-    this.pizzas$$ = this.store.select(fromStore.getAllPizzas$);
+    //hook the store to prop
+    this._pizzas$ = this.store.select(fromStore.getAllPizzas);
+    //call for action to load items from server
+    this.store.dispatch(new fromStore.LoadPizzas());
+
+    
     //this.pizzaS$ervice.getPizzas$().subscribe(pizzas$ => {
     //  this.pizzas$ = pizzas$;
     //});
